@@ -1,10 +1,28 @@
 .lookup-book{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    
+    margin: .5rem;
+    gap: .1rem;
 }
 
-.input{
-    width: 200px;
+h1{
+    margin: 0 auto;
+}
+
+.btnRefesh{
+    width: 120px;
+    font-size: larger;
+    margin: 0 auto;
+    padding: 10px 0;
+    border-radius: 10px;
+
+    color: white;
+    cursor: pointer;
+    background-color: rgb(121, 154, 245);
+    
+}
+
+.btnRefesh:hover{
+    background-color: rgb(31, 89, 251);
 }

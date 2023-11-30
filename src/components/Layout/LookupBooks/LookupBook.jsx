@@ -2,64 +2,68 @@ import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 
 import FloatInput from '../../FloatInput/FloatInput';
+import './lookup.css'
 
 const LookupBook = () => {
 
-  const [input, setInput] = useState('');
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState();
-
+  const [books, setBooks] = useState(null);
+  const [dataTable, setTable] = useState(null);
 
   const handleInput = (inputData) => {
-    setInput(inputData);
+    const dataSearching = books?.filter(book => book.title.includes(inputData));
+    setTable(dataSearching);
+  }
+
+  const handleRefesh = () => {
+    setTable(books);
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      try{
-        setLoading(true);
-        const res = await fetch(
-          `http://localhost:8080/api/v1/books?title=${input}`
-        );
-
-        if(res.statusCode !== 200){
-          throw new Error("Tải dữ liệu sách không thành công");
-        }
-
-        const rs =  await res.data.json();
-        setData(rs);
-
-      }catch(error){
-        setErr(error)
-      }finally{
-        setLoading(false);
-      }
-    }
-
+      fetch('http://localhost:8080/api/v1/books')
+        .then((res) => {
+          if(res.ok){
+            return res.json();
+          }
+        })
+        .then((data) => {
+          const dataSrc = data.data.map((book, index) => ({
+            title:book.title, 
+            category_name: book.category_name,
+            author_name: book.author_name,
+            quantity: book.quantity,
+            key: index
+          }));
+          setBooks(dataSrc);
+        })
+    };
     fetchData();
-  }, [input])
-  
+  }, [])
+
+  useEffect( ()=> {
+    setTable(books);
+  }, [books])
+
   const columns = [
     {
       title: 'STT',
-      dataIndex: 'stt',
+      dataIndex: 'key',
       key: 'stt',
     },
     {
       title: 'Tên',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'title',
+      key: 'title',
     },
     {
       title: 'Thể loại',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'category_name',
+      key: 'category_name',
     },
     {
       title: 'Tác giả',
-      dataIndex: 'author',
-      key: 'author',
+      dataIndex: 'author_name',
+      key: 'author_name',
     },
     {
       title: 'Lượng tồn',
@@ -67,15 +71,17 @@ const LookupBook = () => {
       key: 'quantity',
     },
   ];
-  
+    
   return (
     <div className='lookup-book'>
       <h1>Tra cứu sách</h1>
       <div className="input">
         <FloatInput handleInput={handleInput} label="Tên sách" placeholder="Tên sách" name="name-book"/>
       </div>
-      <Table dataSource={data} columns={columns} />;
+      <Table dataSource={dataTable} columns={columns} />
+      <button className='btnRefesh' onClick={handleRefesh}>Làm mới</button> 
     </div>
+
   )
 }
 
