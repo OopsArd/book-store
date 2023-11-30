@@ -10,7 +10,7 @@ const LookupBook = () => {
   const [dataTable, setTable] = useState(null);
 
   const handleInput = (inputData) => {
-    const dataSearching = books?.filter(book => book.title.includes(inputData));
+    const dataSearching = books?.filter(book => book.title.toLowerCase().includes(inputData.toLowerCase()));
     setTable(dataSearching);
   }
 
@@ -40,7 +40,7 @@ const LookupBook = () => {
     fetchData();
   }, [])
 
-  useEffect( ()=> {
+  useEffect(()=> {
     setTable(books);
   }, [books])
 
@@ -73,7 +73,7 @@ const LookupBook = () => {
   ];
     
   return (
-    <div className='lookup-book'>
+    <div className='lookup-layout'>
       <h1>Tra cứu sách</h1>
       <div className="input">
         <FloatInput handleInput={handleInput} label="Tên sách" placeholder="Tên sách" name="name-book"/>

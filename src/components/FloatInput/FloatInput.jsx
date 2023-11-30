@@ -14,7 +14,6 @@ const FloatInput = ({ label, placeholder, value, handleInput, required, type }) 
 
     const handleOnChange = (e) => {
         let valueInput = e.target.value;
-        console.log('value: ', valueInput)
         handleInput(valueInput)
         setInput(valueInput)
     }
