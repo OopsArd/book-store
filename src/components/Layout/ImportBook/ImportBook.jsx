@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 import { Table } from 'antd';
 
 import FloatInput from '../../FloatInput/FloatInput';
@@ -12,10 +13,11 @@ const ImportBook = () => {
   const [quantity, setQuantity] = useState();
   const [err_name, setErrName] = useState(false);
   const [err_quantity, setErrQuantity] = useState(false);
+  const [disable, setDis] = useState(true);
 
 
   const handleInputName = (dataInput) => {
-    let check = books.some(book => book.title.toLowerCase() === dataInput.toLowerCase());
+    let check = books?.some(book => book?.title?.toLowerCase() === dataInput?.toLowerCase());
     if(check){
       setName(dataInput);
       setErrName(false);
@@ -39,14 +41,13 @@ const ImportBook = () => {
   const handleAdd = () => {
     if(name && quantity){
       let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
-      console.log('check: ', check)
 
       if(check.quantity >= 300){
         alert("Chỉ nhập các đầu sách có số lượng tồn ít hơn 300")
         return
       }
 
-      const dataAdd = {...check, title: name, quantity: quantity };
+      const dataAdd = {...check, title: name, quantity: quantity};
       console.log('data input after verify: ', dataAdd);
 
       let dup = listImport?.some(book => book.title === dataAdd.title)
@@ -60,29 +61,43 @@ const ImportBook = () => {
     }
   }
 
-  const handleImport = () => {}
+  const handleImport = () => {
+
+    if(listImport.length > 0){
+      const dataImport = listImport.map((book) => {
+        return { title: book.title, quantity: book.quantity }
+      });
+      console.log(dataImport)
+      
+      axios.post(`http://localhost:8080/api/v1/books`, { dataImport })
+      .then(res => {
+        alert(res.data.message)
+      })
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      fetch(`http://localhost:8080/api/v1/books`)
-        .then((res) => {
-          if(res.ok){
-            return res.json();
-          }
-        })
-        .then((data) => {
-          const dataSrc = data.data.map((book, index) => ({
-            title:book.title, 
-            category_name: book.category_name,
-            author_name: book.author_name,
-            quantity: book.quantity,
-            key: index
-          }));
-          setBooks(dataSrc);
-        })
-    };
-    fetchData();
+    axios.get(`http://localhost:8080/api/v1/books`)
+      .then(res => {
+        const respon = res.data;
+
+        const dataSrc = respon.data.map((book, index) => ({
+          title:book.title, 
+          category_name: book.category_name,
+          author_name: book.author_name,
+          quantity: book.quantity,
+          key: index
+        }));
+        setBooks(dataSrc);
+      })
+      .catch(error => console.log(error));
   }, [])
+
+  useEffect(() => {
+    if(listImport.length > 0){
+      setDis(false);
+    }
+  }, [listImport])
 
   const columns = [
     {
@@ -120,10 +135,11 @@ const ImportBook = () => {
         { err_name && <span className="err_name">Sách không tồn tại</span>}
         <FloatInput className="input_quantity" handleInput={handleInputQuantity} label="Số lượng" placeholder="Số lượng" name="book_quantity" />
         { err_quantity && <span className="err_quantity">Số lượng nhập ít nhất là 150</span>}
-        {<button onClick={handleAdd} className='btnAdd'>Thêm</button>}
+        <button onClick={handleAdd} className='btnAdd'>Thêm</button>
       </div>
+      <h3>Danh sách nhập:</h3>
       <Table dataSource={listImport} columns={columns}  />
-      <button onClick={handleImport} className='btnImport'>Nhập sách</button>
+      <button disabled={disable} onClick={handleImport} className='btnImport'>Nhập sách</button>
     </div>
   )
 }

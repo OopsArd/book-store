@@ -44,10 +44,6 @@ h1{
 
     color: white;
     cursor: pointer;
-    background-color: rgb(121, 154, 245);
-    
-}
-
-.btnAdd:hover, .btnImport:hover{
     background-color: rgb(31, 89, 251);
+    
 }
