@@ -64,14 +64,28 @@ const ImportBook = () => {
   const handleImport = () => {
 
     if(listImport.length > 0){
-      const dataImport = listImport.map((book) => {
-        return { title: book.title, quantity: book.quantity }
+      const details = listImport.map((book) => {
+        return { book_id: book.key + 1, quantity: Number(book.quantity) }
       });
       console.log(dataImport)
-      
-      axios.post(`http://localhost:8080/api/v1/books`, { dataImport })
+      const data = {
+        issuer_name: "FE Import",
+        receipt_details: [...details] 
+      }
+      let dataImport = JSON.stringify(data);
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8080/api/v1/receipts',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        data: dataImport
+      };
+
+      axios.request(config)
       .then(res => {
-        alert(res.data.message)
+        console.log(JSON.stringify(res.data))
       })
     }
   }
