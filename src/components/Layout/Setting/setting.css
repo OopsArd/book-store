@@ -1,0 +1,8 @@
+.setting-layout{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    gap: 15px;
+    margin: 15px;
+}

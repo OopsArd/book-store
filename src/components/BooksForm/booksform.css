@@ -1,0 +1,12 @@
+.btnAdd {
+    width: 120px;
+    font-size: larger;
+   
+    padding: 10px 0;
+    border-radius: 10px;
+    margin: 0 auto;
+
+    color: white;
+    cursor: pointer;
+    background-color: rgb(31, 89, 251);
+}

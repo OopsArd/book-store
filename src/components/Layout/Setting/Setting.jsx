@@ -62,7 +62,8 @@ const Setting = () => {
     }
   ];
   return (
-    <div className='setting-laout'>
+    <div className='setting-layout'>
+      <h1>Danh sách quy định</h1>
       <Table columns={columns} dataSource={rules} />
     </div>
   )
