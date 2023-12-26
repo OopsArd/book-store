@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     
-    margin: .5rem;
-    gap: .5rem;
+    margin: 15px;
+    gap: 15px;
 }
 
 .input {
@@ -11,16 +11,18 @@
     flex-direction: column;
 
     margin: 0 auto;
-    gap: .8rem;
+    gap: 15px;
     width: 100%;
 }
 
+
 .err_name, .err_quantity {
+    padding-left: 15px;
     color: rgb(240, 105, 105);
 }
 
 .input_name, .input_quantity{
-    margin: 1rem auto;
+    margin: 15px auto;
 }
 
 h1{
@@ -28,7 +30,7 @@ h1{
 }
 
 .btnAdd{
-    margin: 1rem auto;
+    margin: 15px auto;
 }
 
 .btnImport{

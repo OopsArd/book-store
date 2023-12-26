@@ -10,7 +10,9 @@
     top: 11px;
     transition: 0.2s ease all;
   }
-  
+  .input{
+    font-size: 18px;
+  }
   .as-placeholder {
     color: gray;
   }
@@ -19,6 +21,6 @@
     top: -8px;
     font-size: 12px !important;
     background: white;
-    padding: 0 5px;
+    padding: 0 8px;
     margin-left: -4px;
   }

@@ -20,7 +20,7 @@ const FloatInput = ({ label, placeholder, value, handleInput, required, type }) 
   
     return (
       <div className="float-label" onFocus={() => setFocus(true)}>
-        <Input onChange={handleOnChange} value={input} type={type} defaultValue={value} />
+        <Input className='input' onChange={handleOnChange} value={input} type={type} defaultValue={value} />
         <label className={labelClass}>
           {isOccupied ? label : placeholder} {requiredMark}
         </label>

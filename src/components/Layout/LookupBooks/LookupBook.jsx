@@ -1,41 +1,58 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Table } from 'antd';
-import axios from 'axios';
 
+import { fetchBooks } from '../../../redux/slice/bookSlice';
 import FloatInput from '../../FloatInput/FloatInput';
 import './lookup.css'
 
 const LookupBook = () => {
+  const dispatch = useDispatch();
+  const books = useSelector((state) => state.books.books);
+  const books_status = useSelector((state) => state.books.status);
+  const error = useSelector((state) => state.books.error);
 
-  const [books, setBooks] = useState(null);
-  const [dataTable, setTable] = useState(null);
+
+  const [dataSearching, setSearching] = useState(books);
 
   const handleInput = (inputData) => {
-    const dataSearching = books?.filter(book => book?.title?.toLowerCase().includes(inputData?.toLowerCase()));
-    setTable(dataSearching);
+    const results = books.filter(book =>
+      book.title.toLowerCase().includes(inputData.toLowerCase())
+    );
+    setSearching(results);
   }
 
   useEffect(() => {
-    console.log("mout")
-    axios.get(`http://localhost:8080/api/v1/books`)
-      .then(res => {
-        const respon = res.data;
+    if (books_status === 'idle') {
+      dispatch(fetchBooks());
+    }
+  }, [books_status, dispatch]);
+  
 
-        const dataSrc = respon.data.map((book, index) => ({
-          title:book.title, 
-          category_name: book.category_name,
-          author_name: book.author_name,
-          quantity: book.quantity,
-          key: index
-        }));
-        setBooks(dataSrc);
-      })
-      .catch(error => console.log(error));
-  }, [])
+  
 
-  useEffect(()=> {
-    setTable(books);
-  }, [books])
+
+  useEffect(() => {
+    setSearching(books);
+  }, [books]);
+
+
+
+  if (books_status === 'loading') {
+    return (
+      <div className='lookup-layout'>
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
+  if (books_status === 'failed') {
+    return (
+      <div className="lookup-books">
+        <div>Error: {error}</div>
+      </div>
+    );
+  }
 
   const columns = [
     {
@@ -71,7 +88,7 @@ const LookupBook = () => {
       <div className="input">
         <FloatInput handleInput={handleInput} label="Tên sách" placeholder="Tên sách" name="name-book"/>
       </div>
-      <Table dataSource={dataTable} columns={columns} />
+      <Table dataSource={dataSearching} columns={columns} />
     </div>
 
   )

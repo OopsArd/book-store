@@ -1,0 +1,45 @@
+.sale-layout{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin: 15px;
+    gap: 15px;
+    
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin: 0 auto;
+    gap: 15px;
+    width: 100%;
+}
+
+.btnAdd, .btnCheck, .btnCreate{
+    width: 120px;
+    font-size: larger;
+   
+    padding: 10px 0;
+    border-radius: 10px;
+    margin: 0 auto;
+
+    color: white;
+    cursor: pointer;
+    background-color: rgb(31, 89, 251);
+    
+}
+
+.error{
+    color: red
+}
+
+.confirm{
+    color: rgb(0, 255, 0)
+}
+
+.error, .confirm{
+    padding-left: .8rem;
+}
