@@ -1,9 +1,9 @@
 import React from 'react'
 
-const MonthlyReport = () => {
+const ReportLayout = () => {
   return (
     <div>MonthlyReport</div>
   )
 }
 
-export default MonthlyReport
+export default ReportLayout

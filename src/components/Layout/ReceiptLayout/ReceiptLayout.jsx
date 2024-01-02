@@ -1,9 +1,9 @@
 import React from 'react'
 
-const CollectRecipt = () => {
+const ReceiptLayout = () => {
   return (
     <div>CollectRecipt</div>
   )
 }
 
-export default CollectRecipt
+export default ReceiptLayout

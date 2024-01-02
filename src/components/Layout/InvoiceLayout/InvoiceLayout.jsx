@@ -7,9 +7,9 @@ import FloatInput from '../../FloatInput/FloatInput'
 import BooksForm from '../../BooksForm/BooksForm'
 import { fetchRules } from '../../../redux/slice/ruleSlice'
 
-import './sale.css'
+import './invoice.css'
 
-const BookSale = () => {
+const InvoiceLayout = () => {
   const dispatch = useDispatch();
   const rules = useSelector(state => state.rules.rules);
 
@@ -151,4 +151,4 @@ const BookSale = () => {
   )
 }
 
-export default BookSale
+export default InvoiceLayout

@@ -5,7 +5,7 @@ import { Table } from 'antd';
 import BooksForm from '../../BooksForm/BooksForm';
 import './import.css'
 
-const ImportBook = () => {
+const ImportLayout = () => {
 
   const [listImport, setList] = useState([]);
   const [disable, setDis] = useState(true);
@@ -21,7 +21,6 @@ const ImportBook = () => {
         receipt_details: [...details] 
       }
 
-      console.log(data);
       let dataImport = JSON.stringify(data);
       let config = {
         method: 'post',
@@ -95,4 +94,4 @@ const ImportBook = () => {
   )
 }
 
-export default ImportBook
+export default ImportLayout

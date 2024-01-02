@@ -6,7 +6,7 @@ import { fetchBooks } from '../../../redux/slice/bookSlice';
 import FloatInput from '../../FloatInput/FloatInput';
 import './lookup.css'
 
-const LookupBook = () => {
+const LookupLayout = () => {
   const dispatch = useDispatch();
   const books = useSelector((state) => state.books.books);
   const books_status = useSelector((state) => state.books.status);
@@ -94,4 +94,4 @@ const LookupBook = () => {
   )
 }
 
-export default LookupBook
+export default LookupLayout

@@ -7,7 +7,7 @@ export const fetchRules = createAsyncThunk('books/fetchRules', async () => {
         return {
             id: rule.id,
             rule_name: rule.rule_name,
-            value: rule.value,
+            value: Number(rule.value),
             is_use: String(rule.is_use),
             description: rule.description,
             key: index

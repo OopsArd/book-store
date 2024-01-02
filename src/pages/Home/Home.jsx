@@ -11,12 +11,12 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
-import BookSale from '../Layout/BookSalesInvoice/BookSale'
-import LookupBook from '../Layout/LookupBooks/LookupBook'
-import CollectReceipt from '../Layout/CollectReceipt/CollectRecipt'
-import ImportBook from '../Layout/ImportBook/ImportBook'
-import MonthlyReport from '../Layout/MonthlyReport/MonthlyReport';
-import Setting from '../Layout/Setting/Setting';
+import LookupLayout from '../../components/Layout/LookupLayout/LookupLayout'
+import ImportLayout from '../../components/Layout/ImportLayout/ImportLayout'
+import InvoiceLayout from '../../components/Layout/InvoiceLayout/InvoiceLayout'
+import ReceiptLayout from '../../components/Layout/ReceiptLayout/ReceiptLayout'
+import ReportLayout from '../../components/Layout/ReportLayout/ReportLayout';
+import SettingLayout from '../../components/Layout/SettingLayout/SettingLayout';
 
 const {  Content, Sider } = Layout;
 
@@ -34,15 +34,15 @@ const items = [
 ];
 
 const components = {
-  1: <LookupBook />,
-  2: <ImportBook />,
-  3: <BookSale />,
-  4: <CollectReceipt />,
-  5: <MonthlyReport />,
-  6: <Setting />
+  1: <LookupLayout />,
+  2: <ImportLayout />,
+  3: <InvoiceLayout />,
+  4: <ReceiptLayout />,
+  5: <ReportLayout />,
+  6: <SettingLayout />
 };
 
-const SideBar = () => {
+const Home = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [render, setRender] = useState(1);
 
@@ -55,7 +55,6 @@ const SideBar = () => {
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <Menu theme="dark" onSelect={handleSelectKey} defaultSelectedKeys={['1']} mode="inline" items={items}/>
       </Sider>
-
       <Layout>
         <Content>
           { components[render] }
@@ -65,4 +64,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default Home;
