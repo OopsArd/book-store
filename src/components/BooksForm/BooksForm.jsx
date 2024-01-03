@@ -12,8 +12,8 @@ const BooksForm = ({title, handleBooks}) => {
 
     const [name, setName] = useState();
     const [quantity, setQuantity] = useState();
-    const [err_name, setErrName] = useState(false);
-    const [err_quantity, setErrQuantity] = useState(false);
+    const [err_name, setErrName] = useState(null);
+    const [err_quantity, setErrQuantity] = useState(null);
     
     const handleInputName = (dataInput) => {
         let check = books?.some(book => book?.title?.toLowerCase() === dataInput?.toLowerCase());
@@ -32,11 +32,14 @@ const BooksForm = ({title, handleBooks}) => {
             case "IMPORT":
                 if(dataInput >= Number(RULE_INPUT_QUANTITY.value)){
                     setQuantity(dataInput);
-                    setErrQuantity(false);
+                    setErrQuantity(null);
                     return
                 }
                 setQuantity(null);
-                setErrQuantity(true);
+                setErrQuantity(
+                    {
+                        title: RULE_INPUT_QUANTITY.description,
+                    });
                 break;
             case "INVOICE":
                 setQuantity(dataInput);
@@ -50,7 +53,7 @@ const BooksForm = ({title, handleBooks}) => {
                 if(name && quantity){
                     let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
                     if(check.quantity >= Number(RULE_IMPORT.value)){
-                        alert("Chỉ nhập các đầu sách có số lượng tồn ít hơn 300")
+                        alert(`Chỉ nhập các đầu sách có số lượng tồn ít hơn ${Number(RULE_IMPORT.value)}`)
                         return
                     }
                     const dataAdd = {...check, title: name, quantity: quantity};
@@ -65,7 +68,7 @@ const BooksForm = ({title, handleBooks}) => {
                     let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
                     let quantityAfterSale = Number(check.quantity) - Number(quantity);
                     if(quantityAfterSale <= Number(RULE_INVOICE.value)){
-                        alert("Số lượng tồn còn lại đã ít hơn 20");
+                        alert(`Số lượng tồn còn lại sẽ ít hơn ${Number(RULE_INVOICE.value)}`);
                         return
                     }
                     const dataAdd = {...check, title: name, quantity: Number(quantity)};
@@ -95,7 +98,7 @@ const BooksForm = ({title, handleBooks}) => {
             <FloatInput className="input_name" handleInput={handleInputName} label="Tên sách" placeholder="Tên sách" name="book_name" />
             { err_name && <span className="err_name">Sách không tồn tại</span>}
             <FloatInput className="input_quantity" handleInput={handleInputQuantity} label="Số lượng" placeholder="Số lượng" name="book_quantity" />
-            { err_quantity && <span className="err_quantity">Số lượng nhập ít nhất là 150</span>}
+            { err_quantity && <span className="err_quantity">{err_quantity.title}</span>}
             <button onClick={handleAdd} className='btnAdd'>Thêm</button>
         </div>
     </div>

@@ -1,0 +1,14 @@
+.receipt-layout{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin: 15px;
+    gap: 15px;
+}
+
+.overlay {
+    background: rgba(253, 253, 253, 0.5);
+    opacity: 10%;
+    z-index: 1;  
+}
