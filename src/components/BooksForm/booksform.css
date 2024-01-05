@@ -10,3 +10,8 @@
     cursor: pointer;
     background-color: rgb(31, 89, 251);
 }
+
+.list-result{
+    height: fit-content;
+    width: 100%;
+}

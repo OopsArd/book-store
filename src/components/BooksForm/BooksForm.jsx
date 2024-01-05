@@ -4,6 +4,7 @@ import { fetchBooks } from '../../redux/slice/bookSlice';
 import { fetchRules } from '../../redux/slice/ruleSlice';
 
 import FloatInput from '../FloatInput/FloatInput'
+import './booksform.css'
 
 const BooksForm = ({title, handleBooks}) => {
     const dispatch = useDispatch();
@@ -12,18 +13,21 @@ const BooksForm = ({title, handleBooks}) => {
 
     const [name, setName] = useState();
     const [quantity, setQuantity] = useState();
-    const [err_name, setErrName] = useState(null);
+    const [dataSearch, setSearching] = useState([]);
+    const [isList, setIsList] = useState(false);
     const [err_quantity, setErrQuantity] = useState(null);
     
     const handleInputName = (dataInput) => {
-        let check = books?.some(book => book?.title?.toLowerCase() === dataInput?.toLowerCase());
-        if(check){
-            setName(dataInput);
-            setErrName(false);
-            return
+        if(!dataInput) {
+            setIsList(false);
         }
-        setName(null);
-        setErrName(true);
+        const results = books.filter(book =>
+            book.category_name.toLowerCase().includes(dataInput.toLowerCase())
+        );
+        setSearching(results);
+        console.log("data search: ", dataSearch)
+        setName(dataInput);
+        setIsList(true);
     }
     
     const handleInputQuantity = (dataInput) => {
@@ -90,14 +94,19 @@ const BooksForm = ({title, handleBooks}) => {
         dispatch(fetchRules());
     }, []);
 
-
-
     return (
     <div className='books-form'>
         <div className="input">
-            <FloatInput className="input_name" handleInput={handleInputName} label="Tên sách" placeholder="Tên sách" name="book_name" />
-            { err_name && <span className="err_name">Sách không tồn tại</span>}
-            <FloatInput className="input_quantity" handleInput={handleInputQuantity} label="Số lượng" placeholder="Số lượng" name="book_quantity" />
+            <FloatInput disable={false} handleDisable={() => false} className="input_name" handleInput={handleInputName} label="Tên sách" placeholder="Tên sách" name="book_name" />
+            { 
+                dataSearch &&
+                <div className='list-result'>
+                    {dataSearch && dataSearch.map(book => {
+                        book.title
+                    })}
+                </div>
+            }
+            <FloatInput disable={false} handleDisable={() => false} className="input_quantity" handleInput={handleInputQuantity} label="Số lượng" placeholder="Số lượng" name="book_quantity" />
             { err_quantity && <span className="err_quantity">{err_quantity.title}</span>}
             <button onClick={handleAdd} className='btnAdd'>Thêm</button>
         </div>

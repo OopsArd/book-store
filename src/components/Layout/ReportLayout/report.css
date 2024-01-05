@@ -1,0 +1,16 @@
+.report-layout{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    margin: 15px;
+}
+
+.options{
+    margin: 0 auto;
+    font-size: 16px;
+    padding: 10px;
+
+    border: 1px solid #bebebe;
+    background-color: #bebebe;
+}

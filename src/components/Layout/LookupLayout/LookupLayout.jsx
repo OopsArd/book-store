@@ -12,14 +12,32 @@ const LookupLayout = () => {
   const books_status = useSelector((state) => state.books.status);
   const error = useSelector((state) => state.books.error);
 
+  const [disableName, setDisableName] = useState(false)
+  const [disableCategory, setDisableCategory] = useState(false)
+
 
   const [dataSearching, setSearching] = useState(books);
 
-  const handleInput = (inputData) => {
+  const handleInputName = (inputData) => {
     const results = books.filter(book =>
       book.title.toLowerCase().includes(inputData.toLowerCase())
     );
     setSearching(results);
+  }
+
+  const handleInputCategory = (inputData) => {
+    const results = books.filter(book =>
+      book.category_name.toLowerCase().includes(inputData.toLowerCase())
+    );
+    setSearching(results);
+  }
+
+  const handleDisableName = (value) => {
+    setDisableCategory(value);
+  }
+
+  const handleDisableCategory = (value) => {
+    setDisableName(value);
   }
 
   useEffect(() => {
@@ -28,15 +46,9 @@ const LookupLayout = () => {
     }
   }, [books_status, dispatch]);
   
-
-  
-
-
   useEffect(() => {
     setSearching(books);
   }, [books]);
-
-
 
   if (books_status === 'loading') {
     return (
@@ -86,7 +98,8 @@ const LookupLayout = () => {
     <div className='lookup-layout'>
       <h1>Tra cứu sách</h1>
       <div className="input">
-        <FloatInput handleInput={handleInput} label="Tên sách" placeholder="Tên sách" name="name-book"/>
+        <FloatInput handleDisable={handleDisableName} disable={disableName} handleInput={handleInputName} label="Tên sách" placeholder="Tên sách" name="name-book"/>
+        <FloatInput handleDisable={handleDisableCategory} disable={disableCategory} handleInput={handleInputCategory} label="Thể loại" placeholder="Thể loại" name="category-book"/>
       </div>
       <Table dataSource={dataSearching} columns={columns} />
     </div>
