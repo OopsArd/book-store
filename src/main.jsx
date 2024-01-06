@@ -9,6 +9,7 @@ import {
 
 import App from './App.jsx'
 import ErrorPage from './components/Error/Error.jsx';
+import LoginPage from './pages/Login/LoginPage'
 import store from './redux/store.js'
 import './index.css'
 
@@ -16,6 +17,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
 ]);

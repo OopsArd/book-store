@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import {
   HomeOutlined,
@@ -7,7 +8,9 @@ import {
   FileDoneOutlined,
   MoneyCollectOutlined,
   BarChartOutlined,
-  SettingOutlined
+  SettingOutlined,
+  LoginOutlined
+  
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
@@ -31,6 +34,7 @@ const items = [
   getItem('Biên lai thu tiền', '4','/bien-lai-thu-tien', <MoneyCollectOutlined />),
   getItem('Báo cáo tháng', '5','/bao-cao', <BarChartOutlined />),
   getItem('Thay đổi quy định', '6','/thay-doi-quy-dinh', <SettingOutlined />),
+  getItem('Đăng xuất', '7','/logout', <LoginOutlined />),
 ];
 
 const components = {
@@ -43,10 +47,15 @@ const components = {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [render, setRender] = useState(1);
 
   const handleSelectKey = (item) => {
+    if(item.key == 7){
+      localStorage.removeItem("ACCESS_TOKEN")
+      navigate('/login')
+    }
     setRender(item.key)
   }
 
