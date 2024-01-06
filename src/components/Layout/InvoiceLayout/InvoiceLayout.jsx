@@ -11,6 +11,7 @@ import FloatInput from '../../FloatInput/FloatInput'
 import BooksForm from '../../BooksForm/BooksForm'
 import { fetchRules } from '../../../redux/slice/ruleSlice'
 import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import { fetchBooks } from '../../../redux/slice/bookSlice'
 import ImportCustomerLayout from '../ImportCustomerLayout/ImportCustomerLayout'
 import Success from '../../Popup/Success';
 
@@ -20,6 +21,7 @@ const InvoiceLayout = () => {
   const dispatch = useDispatch();
   const rules = useSelector(state => state.rules.rules);
   const customers = useSelector(state => state.customers.customers);
+  const books = useSelector(state => state.books.books);
 
   const [phoneNo, setPhone] = useState();
   const [infoCustomer, setInfo] = useState();
@@ -44,6 +46,9 @@ const InvoiceLayout = () => {
 
   useEffect(() => {
     dispatch(fetchRules());
+  }, [])
+  useEffect(() => {
+    dispatch(fetchBooks());
   }, [])
 
   useEffect(() => {
@@ -191,16 +196,28 @@ const InvoiceLayout = () => {
       <div className={`sale-layout  ${isOpen ? 'overlay' : ''} `}>
         <h1>Hóa đơn bán sách</h1>
         <button onClick={addCustomerClick} className='add-icon'><UserAddOutlined /></button>
-        <div className="input">
-          <h3>Thông tin khách hàng</h3>
-          <FloatInput disable={false} handleDisable={() => false} className="input_debt_no" type='tel' handleInput={handleInputPhoneNo} value={phoneNo} label="Số điện thoại" placeholder="Số điện thoại" name="customer_phone_no" />
-          {debtErr && <div className={debtErr?.type}>{debtErr?.title}</div>}
-          <button className='btnCheck' onClick={handleCheck}>Kiểm tra</button>
+        <div className="top">
+          <div className="input">
+            <h3>Thông tin khách hàng</h3>
+            <FloatInput disable={false} handleDisable={() => false} className="input_debt_no" type='tel' handleInput={handleInputPhoneNo} value={phoneNo} label="Số điện thoại" placeholder="Số điện thoại" name="customer_phone_no" />
+            {debtErr && <div className={debtErr?.type}>{debtErr?.title}</div>}
+            <button className='btnCheck' onClick={handleCheck}>Kiểm tra</button>
+          </div>
+          <div className="left">
+            <h3>Sách mua:</h3>
+            <BooksForm title="INVOICE" handleBooks={handleListInvoice}/>
+          </div>
         </div>
-        <h3>Sách mua:</h3>
-        <BooksForm title="INVOICE" handleBooks={handleListInvoice}/>
-        <Table dataSource={listBookInvoice} columns={columns}  />
-        <button onClick={handleCreate} className='btnCreate'>Tạo hóa đơn</button>
+        <div className="tle">DANH SÁCH SẢN PHẨM</div>
+        {listBookInvoice.length > 0 
+          ?
+          <div className="div">
+            <Table dataSource={listBookInvoice} columns={columns}  />
+            <button onClick={handleCreate} className='btnCreate'>Tạo hóa đơn</button>
+          </div>
+          :
+          <h3 className='h3'>(chưa có sách được chọn)</h3>
+        }
       </div>
     </>
   )

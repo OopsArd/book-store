@@ -3,7 +3,7 @@
     background: linear-gradient(to right, #83a4d4, #b6fbff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-h1{
+.login-form h1{
     color: #224367;
     margin: 10px 0;
 }

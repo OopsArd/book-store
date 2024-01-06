@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { Table } from 'antd';
-
 import BooksForm from '../../BooksForm/BooksForm';
 import Success from '../../Popup/Success';
 
@@ -106,8 +105,14 @@ const ImportLayout = () => {
         <h1>Nhập sách</h1>
         <BooksForm title="IMPORT" handleBooks={handleListImport} />
         <h3>Danh sách nhập:</h3>
-        <Table dataSource={listImport} columns={columns}  />
-        <button disabled={disable} onClick={handleImport} className='btnImport'>Nhập sách</button>
+        {listImport.length > 0 ? 
+          <div className='showing'>
+            <Table dataSource={listImport} columns={columns}  />
+            <button disabled={disable} onClick={handleImport} className='btnImport'>Nhập sách</button>
+          </div>
+          :
+          <h3 style={{color: 'white'}}>chưa có sách được chọn</h3>
+        }
       </div>
     </>
   )

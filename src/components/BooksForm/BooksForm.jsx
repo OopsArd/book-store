@@ -120,15 +120,17 @@ const BooksForm = ({title, handleBooks}) => {
         dispatch(fetchBooks());
     }, [])
 
+
     useEffect(() => {
         dispatch(fetchRules());
     }, []);
+
 
     return (
        <>
         {isOpen && <Success data={ale} handleOpen={handleOpen} /> }
         <div className={`books-form  ${isOpen ? 'overlay' : ''} `}>
-            <div className="input">
+            <div className="input_books_form">
                 <FloatInput disable={false} handleDisable={() => false} className="input_pos" handleInput={handleInputName} label="Tên sách" placeholder="Tên sách" name="book_name" />
                 { err_name && <span className="err_name">{err_name.title}</span>}
                 <FloatInput disable={false} handleDisable={() => false} className="input_quantity" handleInput={handleInputQuantity} label="Số lượng" placeholder="Số lượng" name="book_quantity" />
