@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchRules } from '../../../redux/slice/ruleSlice'
+import { fetchRules, changeRules } from '../../../redux/slice/ruleSlice'
 
 import { Form, Popconfirm, Table, Typography } from 'antd'
 import EditableCell from '../../EditableCell/EditableCell'
@@ -47,27 +47,11 @@ const SettingLayout = () => {
           ...item,
           ...row,
         });
-        
-        //
+                
         let ruleIsChanged = newData[index];
         console.log("rule is changed: ", ruleIsChanged)
 
-        let dataToServer = JSON.stringify(ruleIsChanged);
-        let config = {
-          method: 'put',
-          maxBodyLength: Infinity,
-          url: 'http://localhost:8080/api/v1/rules',
-          headers:{
-            'Content-Type': 'application/json'
-          },
-          data: dataToServer
-        };
-        axios.request(config)
-        .then(res => {
-          console.log(JSON.stringify(res.data));
-          alert(res.data.message);
-        })
-        //
+        dispatch(changeRules(ruleIsChanged))
         setData(newData);
         setEditingKey('');
       } else {
@@ -77,7 +61,7 @@ const SettingLayout = () => {
       console.log('Validate Failed:', errInfo);
     }
   };
-  /////////////////////////////////////////////////
+
   useEffect(() => {
     if(status === 'idle'){
       dispatch(fetchRules());

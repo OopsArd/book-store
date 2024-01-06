@@ -11,16 +11,18 @@ import './popup.css'
 
 const { Meta } = Card;
 
-const Popup = ({data, handleOpen}) => {
+const Popup = ({data, handleOpen, getIdCus}) => {
     const dispatch = useDispatch();
     const rules = useSelector(state => state.rules.rules);
     const [transaction_amount, setTransaction] = useState();
+    const [isUseRule, setRules] = useState(null);
 
     const [isAle, setIsAle] = useState(false);
     const [ale, setAle] = useState();
-  
+
     const handleAle = (value) => {
       setIsAle(value)
+      setAle(null)
     }
   
     useEffect(() => {
@@ -30,8 +32,15 @@ const Popup = ({data, handleOpen}) => {
     },[ale])
 
     useEffect(() => {
+        if(rules.length > 0){
+            const IS_USE_PAYMENT_OVER_DEBT = rules.find(rule => rule.rule_name === "IS_USE_PAYMENT_OVER_DEBT");
+            setRules(IS_USE_PAYMENT_OVER_DEBT.is_use)
+        }
+    },[rules])
+
+    useEffect(() => {
         dispatch(fetchRules());
-    }, [])
+    }, [dispatch])
 
     const btnExitClick = () => {
         handleOpen(false);
@@ -45,35 +54,36 @@ const Popup = ({data, handleOpen}) => {
         if(!transaction_amount){
             setAle({title: 'Chưa nhập số tiền thu', type: 'error'})
         }
-        const IS_USE_PAYMENT_OVER_DEBT = rules.find(rule => rule.rule_name === "IS_USE_PAYMENT_OVER_DEBT");
-        if(IS_USE_PAYMENT_OVER_DEBT.is_use){
+        if(isUseRule == 'true'){
             let balance = Number(data.balance);
             if(Number(transaction_amount) > balance){
                 setAle({title: 'Số tiền thu vượt quá số tiền khách nợ', type: 'error'})
                 return
             }
-            let infoBill = {
-                customer_id: data.id,
-                debt_no: data.debt_no,
-                transaction_amount: transaction_amount,
-                transaction_date: Date.now()
-            }
-            let dataToServer = JSON.stringify(infoBill);
-            let config = {
-                method: 'post',
-                maxBodyLength: Infinity,
-                url: 'http://localhost:8080/api/v1/bills',
-                headers:{
-                'Content-Type': 'application/json'
-                },
-                data: dataToServer
-            };
-            axios.request(config)
-            .then(res => {
-                if(res.data.status_code == 200)
-                setAle({title: 'Giao dịch thành công', type: 'success'})
-            })
         }
+        
+        let infoBill = {
+            customer_id: data.id,
+            debt_no: data.debt_no,
+            transaction_amount: transaction_amount,
+            transaction_date: Date.now()
+        }
+        let dataToServer = JSON.stringify(infoBill);
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'http://localhost:8080/api/v1/bills',
+            headers:{
+            'Content-Type': 'application/json'
+            },
+            data: dataToServer
+        };
+        axios.request(config)
+        .then(res => {
+            if(res.data.status_code == 200)
+            setAle({title: 'Giao dịch thành công', type: 'success'})
+        })
+        getIdCus(data.id)
     }
 
     return(

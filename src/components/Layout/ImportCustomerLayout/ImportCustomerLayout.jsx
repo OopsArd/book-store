@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import { fetchCustomers, addCustomer } from '../../../redux/slice/customerSlice'
 import axios from 'axios'
 import FloatInput from '../../FloatInput/FloatInput'
 import Success from '../../Popup/Success'
 
 import './cus.css'
 
-const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
+const ImportCustomerLayout = ({handleOpen, getNewCus}) => {
   const dispatch = useDispatch();
   const customers = useSelector(state => state.customers.customers);
   const [err, setErr] = useState();
@@ -32,7 +32,7 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
 
   useEffect(() => {
     dispatch(fetchCustomers());
-  }, [])
+  }, [dispatch])
 
   const handleInputName = (value) => {
     setName(value)
@@ -70,30 +70,16 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
       })
       return
     }
-    let cus = {
+    let c = {
       full_name: fullName,
       address: address,
       phone_no: phone,
       email: email
     }
-
-    let dataToServer = JSON.stringify(cus);
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:8080/api/v1/customers',
-      headers:{
-        'Content-Type': 'application/json'
-      },
-      data: dataToServer
-    };
-
-    axios.request(config)
-    .then(res => {
-      setAle({title: "Thêm thông tin khách hàng thành công", type: 'success'});
-      getNewPhone(res.data.data.phone_no)
-      handleOpen(false);
-    })
+    dispatch(addCustomer(c));
+    getNewCus(c);
+    setAle({title: "Thêm thông tin khách hàng thành công", type: 'success'});
+    handleOpen(false);
   }
 
   const handleClickOut = () => {

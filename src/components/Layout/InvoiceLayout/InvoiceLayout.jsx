@@ -10,7 +10,7 @@ import { Table } from 'antd'
 import FloatInput from '../../FloatInput/FloatInput'
 import BooksForm from '../../BooksForm/BooksForm'
 import { fetchRules } from '../../../redux/slice/ruleSlice'
-import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import { fetchCustomers, addCustomer } from '../../../redux/slice/customerSlice'
 import { fetchBooks } from '../../../redux/slice/bookSlice'
 import ImportCustomerLayout from '../ImportCustomerLayout/ImportCustomerLayout'
 import Success from '../../Popup/Success';
@@ -27,6 +27,8 @@ const InvoiceLayout = () => {
   const [infoCustomer, setInfo] = useState();
   const [listBookInvoice, setList] = useState([]);
   const [debtErr, setErr] = useState(null);
+
+  const [isRuleDebtNo, setRuleDebtNo] = useState(null);
 
   const [isOpen, setOpen] = useState(false);
   const [load, setLoad] = useState(false);
@@ -45,15 +47,24 @@ const InvoiceLayout = () => {
   },[ale])
 
   useEffect(() => {
+    if(rules.length > 0){
+      const RULE_DEBT_NO = rules.find(rule => rule.rule_name === "MAX_SELL_WITH_DEPT");
+      let ru = {value: RULE_DEBT_NO.value, is_use: RULE_DEBT_NO.is_use, description: RULE_DEBT_NO.description};
+      setRuleDebtNo(ru)
+    }
+  },[rules])
+
+  useEffect(() => {
     dispatch(fetchRules());
-  }, [])
+  }, [dispatch])
+
   useEffect(() => {
     dispatch(fetchBooks());
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(fetchCustomers());
-  }, [load])
+  }, [dispatch])
 
   const handleInputPhoneNo = (dataInput) => {
     setPhone(dataInput);
@@ -109,27 +120,15 @@ const InvoiceLayout = () => {
     const check = customers.find(cus => cus.phone_no == phoneNo)
     console.log("check cus: ", check);
     if(check){
-      const RULE_DEBT_NO = rules.find(rule => rule.rule_name === "MAX_SELL_WITH_DEPT");
-      console.log("RULE_DEBT_NO: ", RULE_DEBT_NO);
-      if(RULE_DEBT_NO.is_use){
+      if(isRuleDebtNo.is_use == 'true'){
         const balance = check.balance;
-        if(balance >= Number(RULE_DEBT_NO.value)){
+        if(balance >= Number(isRuleDebtNo.value)){
           setErr({
-            title: `Công nợ quá ${RULE_DEBT_NO.value}`,
+            title: `Công nợ quá ${isRuleDebtNo.value}`,
             type: "error"
           })
-        }else{
-          setInfo({
-            customer_id: check.id,
-            debt_no: check.debt_no
-          })
-          setErr({
-            title: "Khách hàng được phép mua hàng",
-            type: "confirm"
-          })
+          return
         }
-      }
-      if(!RULE_DEBT_NO.is_use){
         setInfo({
           customer_id: check.id,
           debt_no: check.debt_no
@@ -138,7 +137,16 @@ const InvoiceLayout = () => {
           title: "Khách hàng được phép mua hàng",
           type: "confirm"
         })
+        return
       }
+      setInfo({
+        customer_id: check.id,
+        debt_no: check.debt_no
+      })
+      setErr({
+        title: "Khách hàng được phép mua hàng",
+        type: "confirm"
+      })
     }
     if(!check){
       setErr({
@@ -157,6 +165,7 @@ const InvoiceLayout = () => {
   }
 
   const getNewPhone = (value) => {
+    dispatch(addCustomer(value));
     setPhone(value)
     setLoad(true);
   }
