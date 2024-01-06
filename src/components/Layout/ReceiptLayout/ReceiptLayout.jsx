@@ -1,4 +1,7 @@
 import React, {useState, useEffect} from 'react'
+import { fetchRules } from '../../../redux/slice/ruleSlice'
+import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
 import FloatInput from '../../FloatInput/FloatInput'
@@ -7,7 +10,11 @@ import Popup from '../../Popup/Popup'
 import './receipt.css'
 
 const ReceiptLayout = () => {
-  const [customer_debt_no, setDebt] = useState();
+  const dispatch = useDispatch();
+  const rules = useSelector(state => state.rules.rules);
+  const customers = useSelector(state => state.customers.customers);
+
+  const [phone, setPhone] = useState();
   const [customer_transaction_amount, setTransaction] = useState();
 
   const [bill, setBill] = useState();
@@ -15,8 +22,8 @@ const ReceiptLayout = () => {
 
   const [isOpen, setOpen] = useState(false)
 
-  const handleInputDebtNo = (dataInput) => {
-    setDebt(dataInput);
+  const handleInputPhone = (dataInput) => {
+    setPhone(dataInput);
     setErr(null);
   }
 
@@ -26,38 +33,45 @@ const ReceiptLayout = () => {
   }
 
   const handleCheck = () => {
-    console.log("debt: ", customer_debt_no)
-    axios.get(`http://localhost:8080/api/v1/customers/debt-no/${customer_debt_no}`)
-      .then(res => {
-          const respon = res.data;
-          if(respon.status_code == 404){
-            setErr({
-              title: "Mã công nợ không tồn tại",
-              type: "error"
-            })
-          }else if(respon.status_code == 200){
-            const balance = respon.data.balance;
-            if(Number(balance) < Number(customer_transaction_amount)){
-              setErr({
-                title: "Số tiền thu không được quá số tiền khách đang nợ",
-                type: "error"
-              })
-            }else{
-              setBill({
-                customer_id: respon.data.id,
-                debt_no: customer_debt_no,
-                transaction_amount: customer_transaction_amount,
-                transaction_date: Date.now()
-              })
-              setOpen(true);
-            }
-          }})
-      .catch(error => console.log(error));
+    const check = customers.find(cus => cus.phone_no == phone)
+    console.log("check: ", check)
+    if(check){
+      const IS_USE_PAYMENT_OVER_DEBT = rules.find(rule => rule.rule_name === "IS_USE_PAYMENT_OVER_DEBT");
+      if(IS_USE_PAYMENT_OVER_DEBT){
+        const balance = check.balance;
+        if(customer_transaction_amount > Number(balance)){
+          setErr({title: "Số tiền thu không vượt quá số tiền khách đang nợ", type: "error"})
+          return
+        }
+      }else{
+        setBill({
+          customer_id: check.id,
+          debt_no: check.debt_no,
+          transaction_amount: customer_transaction_amount,
+          transaction_date: Date.now()
+        })
+        setOpen(true);
+      }
+    }
+    if(!check){
+      setErr({
+        title: "Khách hàng không tồn tại",
+        type: "error"
+      })
+    } 
   }
 
   const handleOpen = (value) => {
     setOpen(value)
   }
+
+  useEffect(() => {
+    dispatch(fetchRules());
+  }, [])
+
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [])
 
 
   return (
@@ -67,8 +81,8 @@ const ReceiptLayout = () => {
       <h1>Biên lai thu tiền</h1>
       <div className="input">
         <h3>Thông tin khách hàng</h3>
-        <FloatInput className="input_debt_no" handleInput={handleInputDebtNo} label="Mã công nợ" placeholder="Mã công nợ" name="customer_debt_no" />
-        <FloatInput className="input_transaction_amount" handleInput={handleInputTransactionAmount} label="Số tiền thu" placeholder="Số tiền thu" name="customer_transaction_amount" />
+        <FloatInput disable={false} handleDisable={() => false} className="input_debt_no" handleInput={handleInputPhone} label="Số điện thoại" placeholder="Số điện thoại" name="customer_phone" />
+        <FloatInput disable={false} handleDisable={() => false} className="input_transaction_amount" handleInput={handleInputTransactionAmount} label="Số tiền thu" placeholder="Số tiền thu" name="customer_transaction_amount" />
         {debtErr && <div className={debtErr?.type}>{debtErr?.title}</div>}
         <button className='btnCheck' onClick={handleCheck}>Kiểm tra</button>
       </div>

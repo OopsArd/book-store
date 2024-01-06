@@ -1,6 +1,5 @@
 .btnAdd {
     width: 120px;
-    font-size: larger;
    
     padding: 10px 0;
     border-radius: 10px;
@@ -8,7 +7,7 @@
 
     color: white;
     cursor: pointer;
-    background-color: rgb(31, 89, 251);
+    background-color: #7CC6FE;
 }
 
 .list-result{

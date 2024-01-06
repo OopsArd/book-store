@@ -2,28 +2,42 @@ import {React, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
+import {
+  UserAddOutlined,
+} from '@ant-design/icons';
+
 import { Table } from 'antd'
 import FloatInput from '../../FloatInput/FloatInput'
 import BooksForm from '../../BooksForm/BooksForm'
 import { fetchRules } from '../../../redux/slice/ruleSlice'
+import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import ImportCustomerLayout from '../ImportCustomerLayout/ImportCustomerLayout'
 
 import './invoice.css'
 
 const InvoiceLayout = () => {
   const dispatch = useDispatch();
   const rules = useSelector(state => state.rules.rules);
+  const customers = useSelector(state => state.customers.customers);
 
-  const [debtNo, setDebt] = useState();
+  const [phoneNo, setPhone] = useState();
   const [infoCustomer, setInfo] = useState();
   const [listBookInvoice, setList] = useState([]);
   const [debtErr, setErr] = useState(null);
 
+  const [isOpen, setOpen] = useState(false);
+  const [load, setLoad] = useState(false);
+
   useEffect(() => {
     dispatch(fetchRules());
-  }, [dispatch])
+  }, [])
 
-  const handleInputDebtNo = (dataInput) => {
-    setDebt(dataInput);
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [load])
+
+  const handleInputPhoneNo = (dataInput) => {
+    setPhone(dataInput);
   }
 
   const handleListInvoice = (dataAdd) => {
@@ -41,7 +55,7 @@ const InvoiceLayout = () => {
 
   const handleCreate = () => {
     if(!infoCustomer){
-      alert("Kiểm tra mã công nợ trước khi tạo hóa đơn")
+      alert("Kiểm tra thông tin khách hàng trước khi tạo hóa đơn")
       return
     }
     const list = listBookInvoice.map(book => {
@@ -73,37 +87,59 @@ const InvoiceLayout = () => {
   }
 
   const handleCheck = () => {
-    axios.get(`http://localhost:8080/api/v1/customers/debt-no/${debtNo}`)
-      .then(res => {
-          const respon = res.data;
-          if(respon.status_code == 404){
-            setErr({
-              title: "Mã công nợ không tồn tại",
-              type: "error"
-            })
-          }else if(respon.status_code == 200){
-            const RULE_DEBT_NO = rules.find(rule => rule.rule_name === "MAX_SELL_WITH_DEPT");
-            console.log("RULE_DEBT_NO: ", RULE_DEBT_NO);
-            const balance = respon.data.balance;
-            if(balance >= Number(RULE_DEBT_NO.value)){
-              setErr({
-                title: "Công nợ quá 20.000",
-                type: "error"
-              })
-            }else{
-              let dataGet = {
-                id: respon.data.id,
-                debt_no: respon.data.debt_no,
-              }
-              setInfo(dataGet);
-              setErr({
-                title: "Khách hàng được phép mua hàng",
-                type: "confirm"
-              })
-            }
-          }  
+    const check = customers.find(cus => cus.phone_no == phoneNo)
+    console.log("check cus: ", check);
+    if(check){
+      const RULE_DEBT_NO = rules.find(rule => rule.rule_name === "MAX_SELL_WITH_DEPT");
+      console.log("RULE_DEBT_NO: ", RULE_DEBT_NO);
+      if(RULE_DEBT_NO){
+        const balance = check.balance;
+        if(balance >= Number(RULE_DEBT_NO.value)){
+          setErr({
+            title: `Công nợ quá ${RULE_DEBT_NO.value}`,
+            type: "error"
+          })
+        }else{
+          setInfo({
+            customer_id: check.id,
+            debt_no: check.debt_no
+          })
+          setErr({
+            title: "Khách hàng được phép mua hàng",
+            type: "confirm"
+          })
+        }
+      }
+      if(!RULE_DEBT_NO){
+        setInfo({
+          customer_id: check.id,
+          debt_no: check.debt_no
+        })
+        setErr({
+          title: "Khách hàng được phép mua hàng",
+          type: "confirm"
+        })
+      }
+    }
+    if(!check){
+      setErr({
+        title: "Chưa có khách hàng này",
+        type: "error"
       })
-      .catch(error => console.log(error));
+    }
+  }
+
+  const addCustomerClick = () => {
+    setOpen(true)
+  }
+
+  const handleOpen = (value) => {
+    setOpen(value)
+  }
+
+  const getNewPhone = (value) => {
+    setPhone(value)
+    setLoad(true);
   }
 
   const columns = [
@@ -135,19 +171,23 @@ const InvoiceLayout = () => {
   ];
 
   return (
-    <div className='sale-layout'>
-      <h1>Hóa đơn bán sách</h1>
-      <div className="input">
-        <h3>Thông tin khách hàng</h3>
-        <FloatInput className="input_debt_no" handleInput={handleInputDebtNo} label="Mã công nợ" placeholder="Mã công nợ" name="customer_debt_no" />
-        {debtErr && <div className={debtErr?.type}>{debtErr?.title}</div>}
-        <button className='btnCheck' onClick={handleCheck}>Kiểm tra</button>
+    <>
+      {isOpen && <ImportCustomerLayout getNewPhone={getNewPhone} handleOpen={handleOpen} />}
+      <div className={`sale-layout  ${isOpen ? 'overlay' : ''} `}>
+        <h1>Hóa đơn bán sách</h1>
+        <button onClick={addCustomerClick} className='add-icon'><UserAddOutlined /></button>
+        <div className="input">
+          <h3>Thông tin khách hàng</h3>
+          <FloatInput disable={false} handleDisable={() => false} className="input_debt_no" type='tel' handleInput={handleInputPhoneNo} value={phoneNo} label="Số điện thoại" placeholder="Số điện thoại" name="customer_phone_no" />
+          {debtErr && <div className={debtErr?.type}>{debtErr?.title}</div>}
+          <button className='btnCheck' onClick={handleCheck}>Kiểm tra</button>
+        </div>
+        <h3>Sách mua:</h3>
+        <BooksForm title="INVOICE" handleBooks={handleListInvoice}/>
+        <Table dataSource={listBookInvoice} columns={columns}  />
+        <button onClick={handleCreate} className='btnCreate'>Tạo hóa đơn</button>
       </div>
-      <h3>Sách mua:</h3>
-      <BooksForm title="INVOICE" handleBooks={handleListInvoice}/>
-      <Table dataSource={listBookInvoice} columns={columns}  />
-      <button onClick={handleCreate} className='btnCreate'>Tạo hóa đơn</button>
-    </div>
+    </>
   )
 }
 

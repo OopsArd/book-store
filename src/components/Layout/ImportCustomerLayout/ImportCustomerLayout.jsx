@@ -1,8 +1,108 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchCustomers } from '../../../redux/slice/customerSlice'
+import axios from 'axios'
+import FloatInput from '../../FloatInput/FloatInput'
 
-const ImportCustomerLayout = () => {
+import './cus.css'
+
+const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
+  const dispatch = useDispatch();
+  const customers = useSelector(state => state.customers.customers);
+  const [err, setErr] = useState();
+
+  const [fullName, setName] = useState();
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState('');
+
+
+  useEffect(() => {
+    dispatch(fetchCustomers());
+  }, [])
+
+  const handleInputName = (value) => {
+    setName(value)
+  } 
+  const handleInputPhone = (value) => {
+    setPhone(value)
+  } 
+  const handleInputEmail = (value) => {
+    setEmail(value)
+  } 
+  const handleInputAddress = (value) => {
+    setAddress(value)
+  } 
+
+  const handleClickAdd = () => {
+    if(!fullName){
+      setErr({
+        title: "Nhập tên khách hàng",
+        type: "error"
+      })
+      return
+    }
+    if(!phone){
+      setErr({
+        title: "Nhập số điện thoại",
+        type: "error"
+      })
+      return
+    }
+    const check = customers.find(cus => cus.phone_no === String(phone))
+    if(check){
+      setErr({
+        title: "Số điện thoại đã được đăng kí",
+        type: "error"
+      })
+      return
+    }
+    let cus = {
+      full_name: fullName,
+      address: address,
+      phone_no: phone,
+      email: email
+    }
+
+    let dataToServer = JSON.stringify(cus);
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:8080/api/v1/customers',
+      headers:{
+        'Content-Type': 'application/json'
+      },
+      data: dataToServer
+    };
+
+    axios.request(config)
+    .then(res => {
+      alert(res.data.message);
+      getNewPhone(res.data.data.phone_no)
+      handleOpen(false);
+    })
+  }
+
+  const handleClickOut = () => {
+    handleOpen(false)
+  }
+
+
   return (
-    <div className='customer-popup'>ImportCustomerLayout</div>
+    <div className='customer-popup'>
+      <div className="card-popup">
+        <h1>Thông Tin Khách Hàng</h1>
+        <FloatInput  className="input_debt_no" handleInput={handleInputName} label="Họ và tên" placeholder="Họ và tên" name="customer_full_name" disable={false} handleDisable={() => false} required={true}/>
+        <FloatInput  className="input_debt_no" handleInput={handleInputPhone} label="Số điện thoại" type="tel" placeholder="Số điện thoại" name="customer_phone_no" disable={false} handleDisable={() => false} required={true}/>
+        <FloatInput  className="input_debt_no" handleInput={handleInputEmail} label="Email" type="email" placeholder="Email" name="customer_email" disable={false} handleDisable={() => false}/>
+        <FloatInput  className="input_debt_no" handleInput={handleInputAddress} label="Địa chỉ" placeholder="Địa chỉ" name="customer_address" disable={false} handleDisable={() => false}/>
+        { err && <div className={err?.type}>{err?.title}</div>}
+        <div className="btnGr">
+          <button  onClick={handleClickAdd} className='btnDone'>Xác nhận</button>
+          <button onClick={handleClickOut} className='btnExit'>Thoát</button>
+        </div>
+      </div>
+    </div>
   )
 }
 

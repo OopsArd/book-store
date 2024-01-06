@@ -34,16 +34,23 @@ const BooksForm = ({title, handleBooks}) => {
         const RULE_INPUT_QUANTITY = rules.find(rule => rule.rule_name === "MIN_INPUT_QUANTITY_BOOK")
         switch(title){
             case "IMPORT":
-                if(dataInput >= Number(RULE_INPUT_QUANTITY.value)){
-                    setQuantity(dataInput);
-                    setErrQuantity(null);
-                    return
-                }
-                setQuantity(null);
-                setErrQuantity(
+                if(RULE_INPUT_QUANTITY){
+                    if(dataInput >= Number(RULE_INPUT_QUANTITY.value)){
+                        setQuantity(dataInput);
+                        setErrQuantity(null);
+                        return
+                    }
+                    setQuantity(null);
+                    setErrQuantity(
                     {
                         title: RULE_INPUT_QUANTITY.description,
                     });
+                }
+                if(!RULE_INPUT_QUANTITY){
+                    setQuantity(dataInput);
+                    setErrQuantity(null);
+                }
+
                 break;
             case "INVOICE":
                 setQuantity(dataInput);
@@ -55,13 +62,19 @@ const BooksForm = ({title, handleBooks}) => {
             case "IMPORT": 
                 const RULE_IMPORT = rules.find(rule => rule.rule_name === "MAX_INVENTORY_ALLOW_INPUT")
                 if(name && quantity){
-                    let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
-                    if(check.quantity >= Number(RULE_IMPORT.value)){
-                        alert(`Chỉ nhập các đầu sách có số lượng tồn ít hơn ${Number(RULE_IMPORT.value)}`)
-                        return
+                    if(RULE_IMPORT){
+                        let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
+                        if(check.quantity >= Number(RULE_IMPORT.value)){
+                            alert(`Chỉ nhập các đầu sách có số lượng tồn ít hơn ${Number(RULE_IMPORT.value)}`)
+                            return
+                        }
+                        const dataAdd = {...check, title: name, quantity: quantity};
+                        handleBooks(dataAdd);
                     }
-                    const dataAdd = {...check, title: name, quantity: quantity};
-                    handleBooks(dataAdd);
+                    if(!RULE_IMPORT){
+                        const dataAdd = {...check, title: name, quantity: quantity};
+                        handleBooks(dataAdd);
+                    }
                 }else{
                     alert("Nhập sách và số lượng")
                 }
@@ -69,6 +82,7 @@ const BooksForm = ({title, handleBooks}) => {
             case "INVOICE":
                 const RULE_INVOICE = rules.find(rule => rule.rule_name === "MIN_REMAINING_QUANTITY_SELL_WITH_DEPT")
                 if(name && quantity){
+                   if(RULE_INVOICE){
                     let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
                     let quantityAfterSale = Number(check.quantity) - Number(quantity);
                     if(quantityAfterSale <= Number(RULE_INVOICE.value)){
@@ -77,12 +91,16 @@ const BooksForm = ({title, handleBooks}) => {
                     }
                     const dataAdd = {...check, title: name, quantity: Number(quantity)};
                     handleBooks(dataAdd);
+                   }
+                   if (!RULE_INVOICE) {
+                    const dataAdd = {...check, title: name, quantity: Number(quantity)};
+                    handleBooks(dataAdd);
+                   }
                 }else{
                     alert("Nhập sách và số lượng")
                 }
                 break;
             default: alert("Không tồn tại nghiệp vụ");
-
         }
     }
 

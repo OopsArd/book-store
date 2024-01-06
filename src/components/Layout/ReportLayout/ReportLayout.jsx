@@ -40,7 +40,7 @@ const ReportLayout = () => {
     },
   ])
 
-  const [reports, setReports] = useState([]);
+  const [reports, setReports] = useState();
   
 
   const handleChangeOptions = (title) => {
@@ -72,8 +72,12 @@ const ReportLayout = () => {
   
     axios.request(config)
     .then(res => {
-      const data = {...res.data.data, key: res.data.dataid};
-      setReports(data)
+      const data = res.data.data;
+      const s = data.map(item => {
+        return {...item, key: item.id}
+      })
+      console.log("data: ", typeof(s))
+      setReports(s)
     })
 
     setStart(s);
@@ -104,8 +108,12 @@ const ReportLayout = () => {
   
       axios.request(config)
       .then(res => {
-        const data = {...res.data.data, key: res.data.data.id};
-        setReports(data)
+        const data = res.data.data;
+        const s = data.map(item => {
+          return {...item, key: item.id}
+        })
+        console.log("data: ", typeof(s))
+        setReports(s)
       })
     }
   },[reportTypes])

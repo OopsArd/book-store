@@ -19,7 +19,7 @@
 
 .btnAdd, .btnCheck, .btnCreate{
     width: 120px;
-    font-size: larger;
+    font-size: large;
    
     padding: 10px 0;
     border-radius: 10px;
@@ -27,7 +27,7 @@
 
     color: white;
     cursor: pointer;
-    background-color: rgb(31, 89, 251);
+    background-color: #7CC6FE;
     
 }
 
@@ -41,4 +41,28 @@
 
 .error, .confirm{
     padding-left: .8rem;
+}
+
+.add-icon{
+    position: absolute;
+    top: 85%;
+    left: 90%;
+
+    z-index: 100000;
+    background-color: #48abfc;
+    color: white;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    
+    width: 80px;
+    height: 80px;
+
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.overlay {
+    background: rgba(253, 253, 253, 0.5);
+    opacity: 10%;
+    z-index: 1;  
 }
