@@ -12,6 +12,7 @@ import BooksForm from '../../BooksForm/BooksForm'
 import { fetchRules } from '../../../redux/slice/ruleSlice'
 import { fetchCustomers } from '../../../redux/slice/customerSlice'
 import ImportCustomerLayout from '../ImportCustomerLayout/ImportCustomerLayout'
+import Success from '../../Popup/Success';
 
 import './invoice.css'
 
@@ -28,6 +29,19 @@ const InvoiceLayout = () => {
   const [isOpen, setOpen] = useState(false);
   const [load, setLoad] = useState(false);
 
+  const [isAle, setIsAle] = useState(false);
+  const [ale, setAle] = useState();
+
+  const handleAle = (value) => {
+    setIsAle(value)
+  }
+
+  useEffect(() => {
+    if(ale){
+      setIsAle(true)
+    }
+  },[ale])
+
   useEffect(() => {
     dispatch(fetchRules());
   }, [])
@@ -43,7 +57,7 @@ const InvoiceLayout = () => {
   const handleListInvoice = (dataAdd) => {
     let dup = listBookInvoice?.some(book => book.title === dataAdd.title)
     if(dup){
-      alert("Sách đã được thêm trước đó")
+      setAle({title: "Sách đã được thêm trước đó", type: 'error'})
     }else{
       const dataBook = {
         ...dataAdd, 
@@ -55,7 +69,7 @@ const InvoiceLayout = () => {
 
   const handleCreate = () => {
     if(!infoCustomer){
-      alert("Kiểm tra thông tin khách hàng trước khi tạo hóa đơn")
+      setAle({title: "Kiểm tra thông tin khách hàng trước khi tạo hóa đơn", type: 'error'})
       return
     }
     const list = listBookInvoice.map(book => {
@@ -82,7 +96,7 @@ const InvoiceLayout = () => {
     axios.request(config)
     .then(res => {
       console.log(JSON.stringify(res.data));
-      alert(res.data.message);
+      setAle({title: 'hóa đơn đã được tạo thành công', type: 'success'});
     })
   }
 
@@ -92,7 +106,7 @@ const InvoiceLayout = () => {
     if(check){
       const RULE_DEBT_NO = rules.find(rule => rule.rule_name === "MAX_SELL_WITH_DEPT");
       console.log("RULE_DEBT_NO: ", RULE_DEBT_NO);
-      if(RULE_DEBT_NO){
+      if(RULE_DEBT_NO.is_use){
         const balance = check.balance;
         if(balance >= Number(RULE_DEBT_NO.value)){
           setErr({
@@ -110,7 +124,7 @@ const InvoiceLayout = () => {
           })
         }
       }
-      if(!RULE_DEBT_NO){
+      if(!RULE_DEBT_NO.is_use){
         setInfo({
           customer_id: check.id,
           debt_no: check.debt_no
@@ -172,6 +186,7 @@ const InvoiceLayout = () => {
 
   return (
     <>
+      {isAle && <Success data={ale} handleOpen={handleAle} /> }
       {isOpen && <ImportCustomerLayout getNewPhone={getNewPhone} handleOpen={handleOpen} />}
       <div className={`sale-layout  ${isOpen ? 'overlay' : ''} `}>
         <h1>Hóa đơn bán sách</h1>

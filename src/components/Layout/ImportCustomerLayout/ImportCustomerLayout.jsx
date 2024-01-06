@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { fetchCustomers } from '../../../redux/slice/customerSlice'
 import axios from 'axios'
 import FloatInput from '../../FloatInput/FloatInput'
+import Success from '../../Popup/Success'
 
 import './cus.css'
 
@@ -16,6 +17,18 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
   const [phone, setPhone] = useState();
   const [email, setEmail] = useState('');
 
+  const [isAle, setIsAle] = useState(false);
+  const [ale, setAle] = useState();
+
+  const handleAle = (value) => {
+    setIsAle(value)
+  }
+
+  useEffect(() => {
+    if(ale){
+      setIsAle(true)
+    }
+  },[ale])
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -77,7 +90,7 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
 
     axios.request(config)
     .then(res => {
-      alert(res.data.message);
+      setAle({title: "Thêm thông tin khách hàng thành công", type: 'success'});
       getNewPhone(res.data.data.phone_no)
       handleOpen(false);
     })
@@ -88,8 +101,12 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
   }
 
 
+
+
   return (
-    <div className='customer-popup'>
+    <>
+      {isAle && <Success data={ale} handleOpen={handleAle} /> }
+      <div className={`customer-popup  ${isAle ? 'overlay' : ''} `}>
       <div className="card-popup">
         <h1>Thông Tin Khách Hàng</h1>
         <FloatInput  className="input_debt_no" handleInput={handleInputName} label="Họ và tên" placeholder="Họ và tên" name="customer_full_name" disable={false} handleDisable={() => false} required={true}/>
@@ -103,6 +120,7 @@ const ImportCustomerLayout = ({handleOpen, getNewPhone}) => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

@@ -6,6 +6,7 @@ import axios from 'axios'
 
 import FloatInput from '../../FloatInput/FloatInput'
 import Popup from '../../Popup/Popup'
+import Success from '../../Popup/Success'
 
 import './receipt.css'
 
@@ -22,6 +23,7 @@ const ReceiptLayout = () => {
 
   const [isOpen, setOpen] = useState(false)
 
+
   const handleInputPhone = (dataInput) => {
     setPhone(dataInput);
     setErr(null);
@@ -33,37 +35,55 @@ const ReceiptLayout = () => {
   }
 
   const handleCheck = () => {
-    const check = customers.find(cus => cus.phone_no == phone)
-    console.log("check: ", check)
-    if(check){
-      const IS_USE_PAYMENT_OVER_DEBT = rules.find(rule => rule.rule_name === "IS_USE_PAYMENT_OVER_DEBT");
-      if(IS_USE_PAYMENT_OVER_DEBT){
-        const balance = check.balance;
-        if(customer_transaction_amount > Number(balance)){
-          setErr({title: "Số tiền thu không vượt quá số tiền khách đang nợ", type: "error"})
-          return
+    if(phone && customer_transaction_amount){
+      const check = customers.find(cus => cus.phone_no == phone)
+      console.log("check: ", check)
+      if(check){
+        const IS_USE_PAYMENT_OVER_DEBT = rules.find(rule => rule.rule_name === "IS_USE_PAYMENT_OVER_DEBT");
+        if(IS_USE_PAYMENT_OVER_DEBT.is_use){
+          const balance = check.balance;
+          if(customer_transaction_amount > Number(balance)){
+            setErr({title: "Số tiền thu không vượt quá số tiền khách đang nợ", type: "error"})
+            return
+          }else{
+            setOpen(true);
+            setBill({
+              customer_id: check.id,
+              debt_no: check.debt_no,
+              transaction_amount: customer_transaction_amount,
+              transaction_date: Date.now()
+            })
+          }
         }
-      }else{
-        setBill({
-          customer_id: check.id,
-          debt_no: check.debt_no,
-          transaction_amount: customer_transaction_amount,
-          transaction_date: Date.now()
-        })
-        setOpen(true);
+        if(!IS_USE_PAYMENT_OVER_DEBT.is_use){
+          setOpen(true);
+          setBill({
+            customer_id: check.id,
+            debt_no: check.debt_no,
+            transaction_amount: customer_transaction_amount,
+            transaction_date: Date.now()
+          })
+        }
       }
+      if(!check){
+        setErr({
+          title: "Khách hàng không tồn tại",
+          type: "error"
+        })
+      } 
     }
-    if(!check){
-      setErr({
-        title: "Khách hàng không tồn tại",
-        type: "error"
-      })
-    } 
   }
+
 
   const handleOpen = (value) => {
     setOpen(value)
   }
+
+  useEffect(() => {
+    if(bill){
+      setOpen(true);
+    }
+  },[bill])
 
   useEffect(() => {
     dispatch(fetchRules());

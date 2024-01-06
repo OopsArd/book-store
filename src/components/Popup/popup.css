@@ -38,6 +38,32 @@
     
 }
 
+.tt{
+    margin: 0 auto;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.ct{
+    margin: 10px auto;
+    font-size: 16px;
+}
+
+.sc{
+    z-index: 9999999999999999999999999999;
+}
+
+.icon-success{
+    color: rgb(78, 223, 65);
+    font-size: 50px;
+    margin: 0 auto;
+}
+.icon-error{
+    color: rgb(225, 76, 76);
+    font-size: 50px;
+    margin: 0 auto;
+}
+
 .btnPrint{
     background-color: rgb(77, 162, 248);
     color: white;

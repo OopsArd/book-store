@@ -53,3 +53,9 @@ h1{
     background-color: #7CC6FE;
     
 }
+
+.overlay {
+    background: rgba(253, 253, 253, 0.5);
+    opacity: 10%;
+    z-index: 1;  
+}
