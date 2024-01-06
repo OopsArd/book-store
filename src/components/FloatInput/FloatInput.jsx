@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Input } from 'antd';
 import './FloatInput.css'
 
-const FloatInput = ({ handleFocus, handleDisable, isFocus, disable, label, placeholder, value, handleInput, required, type }) => {
+const FloatInput = ({ width, handleFocus, handleDisable, isFocus, disable, label, placeholder, value, handleInput, required, type }) => {
     const [focus, setFocus] = useState(false);
     const [input, setInput] = useState(value || '');
   
@@ -38,7 +38,7 @@ const FloatInput = ({ handleFocus, handleDisable, isFocus, disable, label, place
     }
   
     return (
-      <div className="float-label" onBlur={() => handleBlur(true)} onFocus={() => handleFocusInput(true)}>
+      <div className="float-label" style={{width: `${width ? width : '500px'}`}} onBlur={() => handleBlur(true)} onFocus={() => handleFocusInput(true)}>
         <Input disabled={disable} className='input' onChange={handleOnChange} value={input} type={type} />
         <label className={labelClass}>
           {isOccupied ? label : placeholder} {requiredMark}
