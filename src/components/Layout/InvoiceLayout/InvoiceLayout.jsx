@@ -84,6 +84,7 @@ const InvoiceLayout = () => {
   }
 
   const handleCreate = () => {
+    console.log("info: ", infoCustomer)
     if(!infoCustomer){
       setAle({title: "Kiểm tra thông tin khách hàng trước khi tạo hóa đơn", type: 'error'})
       return
@@ -92,7 +93,7 @@ const InvoiceLayout = () => {
       return {id: book.id, quantity: book.quantity }
     })
     let data = {
-      customer_id: infoCustomer.id,
+      customer_id: infoCustomer.customer_id,
       debt_no: infoCustomer.debt_no,
       invoice_details: list,
       transaction_date: Date.now()
