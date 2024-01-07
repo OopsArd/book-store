@@ -94,7 +94,8 @@ const InvoiceLayout = () => {
     let data = {
       customer_id: infoCustomer.id,
       debt_no: infoCustomer.debt_no,
-      invoice_details: list
+      invoice_details: list,
+      transaction_date: Date.now()
     };
 
     let dataInvoice = JSON.stringify(data);
