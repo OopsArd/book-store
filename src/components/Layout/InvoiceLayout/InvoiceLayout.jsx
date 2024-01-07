@@ -205,7 +205,7 @@ const InvoiceLayout = () => {
     <>
       {isAle && <Success data={ale} handleOpen={handleAle} /> }
       {isOpen && <ImportCustomerLayout getNewCus={getNewCus} handleOpen={handleOpen} />}
-      <div className={`sale-layout  ${isOpen ? 'overlay' : ''} `}>
+      <div className={`sale-layout  ${isOpen ? 'overlay' : ''} ${isAle ? 'overlay' : ''} `}>
         <h1>Hóa đơn bán sách</h1>
         <button onClick={addCustomerClick} className='add-icon'><UserAddOutlined /></button>
         <div className="top">

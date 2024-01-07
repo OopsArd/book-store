@@ -73,6 +73,7 @@ const ReportLayout = () => {
       end_date: e,
       url: reportTypes
     }
+    console.log("date change: ", data)
     dispatch(getReports(data))
     setStart(s);
     setEnd(e);
@@ -88,6 +89,8 @@ const ReportLayout = () => {
         url: reportTypes,
       }
       dispatch(getReports(data));
+      setStart(formattedStart);
+      setEnd(formattedEnd);
     }
   },[reportTypes])
 
