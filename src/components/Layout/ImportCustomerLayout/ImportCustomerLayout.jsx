@@ -93,18 +93,18 @@ const ImportCustomerLayout = ({handleOpen, getNewCus}) => {
     <>
       {isAle && <Success data={ale} handleOpen={handleAle} /> }
       <div className={`customer-popup  ${isAle ? 'overlay' : ''} `}>
-      <div className="card-popup">
-        <h1>Thông Tin Khách Hàng</h1>
-        <FloatInput  className="input_debt_no" handleInput={handleInputName} label="Họ và tên" placeholder="Họ và tên" name="customer_full_name" disable={false} handleDisable={() => false} required={true}/>
-        <FloatInput  className="input_debt_no" handleInput={handleInputPhone} label="Số điện thoại" type="tel" placeholder="Số điện thoại" name="customer_phone_no" disable={false} handleDisable={() => false} required={true}/>
-        <FloatInput  className="input_debt_no" handleInput={handleInputEmail} label="Email" type="email" placeholder="Email" name="customer_email" disable={false} handleDisable={() => false}/>
-        <FloatInput  className="input_debt_no" handleInput={handleInputAddress} label="Địa chỉ" placeholder="Địa chỉ" name="customer_address" disable={false} handleDisable={() => false}/>
-        { err && <div className={err?.type}>{err?.title}</div>}
-        <div className="btnGr">
-          <button  onClick={handleClickAdd} className='btnDone'>Xác nhận</button>
-          <button onClick={handleClickOut} className='btnExit'>Thoát</button>
+        <div className="card-popup">
+          <h1>Thông Tin Khách Hàng</h1>
+          <FloatInput width='100%'  className="input_debt_no" handleInput={handleInputName} label="Họ và tên" placeholder="Họ và tên" name="customer_full_name" disable={false} handleDisable={() => false} required={true}/>
+          <FloatInput width='100%' className="input_debt_no" handleInput={handleInputPhone} label="Số điện thoại" type="tel" placeholder="Số điện thoại" name="customer_phone_no" disable={false} handleDisable={() => false} required={true}/>
+          <FloatInput width='100%' className="input_debt_no" handleInput={handleInputEmail} label="Email" type="email" placeholder="Email" name="customer_email" disable={false} handleDisable={() => false}/>
+          <FloatInput width='100%' className="input_debt_no" handleInput={handleInputAddress} label="Địa chỉ" placeholder="Địa chỉ" name="customer_address" disable={false} handleDisable={() => false}/>
+          { err && <div className={err?.type}>{err?.title}</div>}
+          <div className="btnGr">
+            <button  onClick={handleClickAdd} className='btnDone'>Xác nhận</button>
+            <button onClick={handleClickOut} className='btnExit'>Thoát</button>
+          </div>
         </div>
-      </div>
     </div>
     </>
   )

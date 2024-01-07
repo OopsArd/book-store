@@ -41,6 +41,7 @@ export const addCustomer = createAsyncThunk('customers/addCustomer', async (valu
         debt_no: data.debt_no,
         balance: data.balance,
     }
+    console.log("rs: ")
     return rs
 });
 export const updateCustomer = createAsyncThunk('customers/updateCustomer', async (value) => {

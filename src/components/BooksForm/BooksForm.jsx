@@ -34,7 +34,7 @@ const BooksForm = ({title, handleBooks}) => {
     },[ale])
 
     useEffect(() => {
-        if(rules.legth > 0){
+        if(rules.length > 0){
             const RULE_INPUT_QUANTITY = rules.find(rule => rule.rule_name === "MIN_INPUT_QUANTITY_BOOK");
 
             let ru = {value: RULE_INPUT_QUANTITY.value, is_use: RULE_INPUT_QUANTITY.is_use, description: RULE_INPUT_QUANTITY.description};
@@ -42,15 +42,14 @@ const BooksForm = ({title, handleBooks}) => {
         }
     },[rules])
     useEffect(() => {
-        if(rules.legth > 0){
+        if(rules.length > 0){
             const RULE_IMPORT = rules.find(rule => rule.rule_name === "MAX_INVENTORY_ALLOW_INPUT")
-
             let ru = {value: RULE_IMPORT.value, is_use: RULE_IMPORT.is_use, description: RULE_IMPORT.description};
             setRuleImport(ru)
         }
     },[rules])
     useEffect(() => {
-        if(rules.legth > 0){
+        if(rules.length > 0){
             const RULE_INVOICE = rules.find(rule => rule.rule_name === "MIN_REMAINING_QUANTITY_SELL_WITH_DEPT")
 
             let ru = {value: RULE_INVOICE.value, is_use: RULE_INVOICE.is_use, description: RULE_INVOICE.description};
@@ -61,7 +60,6 @@ const BooksForm = ({title, handleBooks}) => {
     
     const handleInputName = (dataInput) => {
         let check = books.find(book => book.title.toLowerCase() === dataInput.toLowerCase());
-        console.log("check: ", check)
         if(check){
             setName(dataInput);
             setErrName(null)
@@ -71,11 +69,11 @@ const BooksForm = ({title, handleBooks}) => {
     }
 
     const handleInputQuantity = (dataInput) => {
-        
         switch(title){
             case "IMPORT":
-                if(isMinInputQuantity.is_use == 'true'){
-                    if(dataInput >= Number(isMinInputQuantity.value)){
+                console.log("is min: ", isMinInputQuantity)
+                if(isMinInputQuantity?.is_use == 'true'){
+                    if(dataInput >= Number(isMinInputQuantity?.value)){
                         setQuantity(dataInput);
                         setErrQuantity(null);
                         return
@@ -83,7 +81,7 @@ const BooksForm = ({title, handleBooks}) => {
                     setQuantity(null);
                     setErrQuantity(
                     {
-                        title: isMinInputQuantity.description,
+                        title: isMinInputQuantity?.description,
                     });
                     return
                 }
@@ -99,15 +97,18 @@ const BooksForm = ({title, handleBooks}) => {
         switch(title){
             case "IMPORT": 
                 if(name && quantity){
-                    if(isRuleImport.is_use == 'true'){
-                        let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
-                        if(check.quantity >= Number(isRuleImport.value)){
-                            setAle({title: `Chỉ nhập các đầu sách có số lượng tồn ít hơn ${Number(isRuleImport.value)}`, type: 'error'})
+                    const check = books.find(book => book.title.toLowerCase() == name.toLowerCase());
+                    if(isRuleImport?.is_use == 'true'){
+                        console.log("check: ", check)
+                        if(check){
+                            if(check.quantity >= Number(isRuleImport?.value)){
+                                setAle({title: `Chỉ nhập các đầu sách có số lượng tồn ít hơn ${Number(isRuleImport?.value)}`, type: 'error'})
+                                return
+                            }
+                            const dataAdd = {...check, title: name, quantity: quantity};
+                            handleBooks(dataAdd);
                             return
                         }
-                        const dataAdd = {...check, title: name, quantity: quantity};
-                        handleBooks(dataAdd);
-                        return
                     }
                     const dataAdd = {...check, title: name, quantity: quantity};
                     handleBooks(dataAdd);
@@ -117,11 +118,11 @@ const BooksForm = ({title, handleBooks}) => {
                 break;
             case "INVOICE":
                 if(name && quantity){
-                   if(isRuleInvoice.is_use == 'true'){
-                        let check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
+                    const check = books.find(book => book.title.toLowerCase() === name.toLowerCase());
+                   if(isRuleInvoice?.is_use == 'true'){
                         let quantityAfterSale = Number(check.quantity) - Number(quantity);
                         if(quantityAfterSale <= Number(isRuleInvoice.value)){
-                            setAle({title: `Số lượng tồn còn lại sẽ ít hơn ${Number(isRuleInvoice.value)}`, type: 'error'})
+                            setAle({title: `Số lượng tồn còn lại sẽ ít hơn ${Number(isRuleInvoice?.value)}`, type: 'error'})
                             return
                         }
                         const dataAdd = {...check, title: name, quantity: Number(quantity)};

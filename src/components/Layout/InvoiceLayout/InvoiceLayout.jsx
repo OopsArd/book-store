@@ -56,11 +56,11 @@ const InvoiceLayout = () => {
 
   useEffect(() => {
     dispatch(fetchRules());
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
     dispatch(fetchBooks());
-  }, [dispatch])
+  }, [])
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -164,7 +164,8 @@ const InvoiceLayout = () => {
     setOpen(value)
   }
 
-  const getNewPhone = (value) => {
+  const getNewCus = (value) => {
+    console.log(value)
     dispatch(addCustomer(value));
     setPhone(value)
     setLoad(true);
@@ -201,7 +202,7 @@ const InvoiceLayout = () => {
   return (
     <>
       {isAle && <Success data={ale} handleOpen={handleAle} /> }
-      {isOpen && <ImportCustomerLayout getNewPhone={getNewPhone} handleOpen={handleOpen} />}
+      {isOpen && <ImportCustomerLayout getNewCus={getNewCus} handleOpen={handleOpen} />}
       <div className={`sale-layout  ${isOpen ? 'overlay' : ''} `}>
         <h1>Hóa đơn bán sách</h1>
         <button onClick={addCustomerClick} className='add-icon'><UserAddOutlined /></button>
